@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Mishagram</string>
+    <string name="login">login</string>
+    <string name="username">username:</string>
+    <string name="password">password:</string>
+    <string name="register">register</string>
+    <string name="register_with_mishagram">Register with Mishagram</string>
+    <string name="first_name">first name:</string>
+    <string name="last_name">last name:</string>
+    <string name="email">email:</string>
+    <string name="gender">Select gender:</string>
+    <string name="accept_notifications">Accept notifications</string>
+    <string name="birth_date">Birth date:</string>
+
+    <string-array name="gender_array">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Not specified lol</item>
+    </string-array>
+</resources>

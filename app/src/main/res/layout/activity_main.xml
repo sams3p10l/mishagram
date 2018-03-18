@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.specter.mishagram.MainActivity"
+    android:orientation="vertical"
+    tools:targetApi="o"
+    android:background="@drawable/telegram_wpp_blue">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="80dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/mishagram_logo"
+        />
+
+    <EditText
+        android:id="@+id/usernameField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="40dp"
+        android:text="@string/username"
+        android:textColor="@color/colorPrimaryTransparent"
+        android:textStyle="italic"
+        />
+
+    <EditText
+        android:id="@+id/passwordField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="40dp"
+        android:text="@string/password"
+        android:textColor="@color/colorPrimaryTransparent"
+        android:textStyle="italic"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation = "horizontal"
+        android:layout_marginVertical="40dp">
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="60pt"
+            android:layout_height="60dp"
+            android:layout_marginStart="40dp"
+            android:text="@string/login"
+            android:enabled="false"/>
+
+        <Space
+            android:layout_width="20pt"
+            android:layout_height="60dp" />
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="60pt"
+            android:layout_height="60dp"
+            android:text="@string/register" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.specter.mishagram.RegisterActivity"
+    android:orientation="vertical"
+    android:background="@drawable/telegram_wpp_blue">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/register_with_mishagram"
+        android:textSize="26sp"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="15dp"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="8dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation = "horizontal"
+        android:layout_marginStart="15dp"
+        >
+
+        <EditText
+            android:id="@+id/first_name"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="@string/first_name"
+            android:textColor="#BB000000"/>
+
+        <EditText
+            android:id="@+id/last_name"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:text="@string/last_name"
+            android:textColor="#BB000000"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation = "horizontal"
+        android:layout_marginStart="15dp"
+        >
+
+        <EditText
+            android:id="@+id/username_register"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="@string/username"
+            android:textColor="#BB000000"/>
+
+        <EditText
+            android:id="@+id/password_register"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:text="@string/password"
+            android:textColor="#BB000000"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="15dp">
+
+        <EditText
+            android:id="@+id/email_register"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:textColor="#BB000000"/>
+
+        <TextView
+            android:layout_width="110dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="43dp"
+            android:text="@string/gender"
+            android:textSize="16sp"
+            android:textColor="#BB000000"/>
+
+        <Spinner
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:id="@+id/gender_spinner"
+        />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="5dp">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accept_notifications"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/birth_date"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="5dp"
+        android:textSize="16sp"
+        android:textColor="#000000"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CalendarView
+            android:layout_width="wrap_content"
+            android:layout_height="290dp"
+            android:layout_marginStart="22dp"
+            android:firstDayOfWeek="2"
+            >
+        </CalendarView>
+
+        <Button
+            android:id="@+id/button_register"
+            android:layout_width="wrap_content"
+            android:layout_height="62dp"
+            android:layout_marginStart="120dp"
+            android:width="150dp"
+            android:text="@string/register"
+            android:enabled="false"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>
