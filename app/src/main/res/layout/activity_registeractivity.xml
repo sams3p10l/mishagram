@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -38,16 +37,20 @@
             android:id="@+id/first_name"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:text="@string/first_name"
-            android:textColor="#BB000000"/>
+            android:hint="@string/first_name"
+            android:textColorHint="@color/colorPrimaryTransparent"
+            android:maxLines="1"
+            />
 
         <EditText
             android:id="@+id/last_name"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:text="@string/last_name"
-            android:textColor="#BB000000"/>
+            android:hint="@string/last_name"
+            android:textColorHint="@color/colorPrimaryTransparent"
+            android:maxLines="1"
+            />
 
     </LinearLayout>
 
@@ -62,16 +65,21 @@
             android:id="@+id/username_register"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:text="@string/username"
-            android:textColor="#BB000000"/>
+            android:hint="@string/username"
+            android:textColorHint="@color/colorPrimaryTransparent"
+            android:maxLines="1"
+            />
 
         <EditText
             android:id="@+id/password_register"
+            android:inputType="textPassword"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:text="@string/password"
-            android:textColor="#BB000000"/>
+            android:hint="@string/password"
+            android:textColorHint="@color/colorPrimaryTransparent"
+            android:maxLines="1"
+            />
 
     </LinearLayout>
 
@@ -83,10 +91,13 @@
 
         <EditText
             android:id="@+id/email_register"
+            android:inputType="textEmailAddress"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:text="@string/email"
-            android:textColor="#BB000000"/>
+            android:hint="@string/email"
+            android:textColorHint="@color/colorPrimaryTransparent"
+            android:maxLines="1"
+            />
 
         <TextView
             android:layout_width="110dp"
@@ -133,6 +144,7 @@
         android:orientation="vertical">
 
         <CalendarView
+            android:id="@+id/calendar"
             android:layout_width="wrap_content"
             android:layout_height="290dp"
             android:layout_marginStart="22dp"

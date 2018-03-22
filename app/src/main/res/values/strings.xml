@@ -11,6 +11,13 @@
     <string name="gender">Select gender:</string>
     <string name="accept_notifications">Accept notifications</string>
     <string name="birth_date">Birth date:</string>
+    <string name="log_out">log out</string>
+    <string name="messages">Messages</string>
+    <string name="logo">logo</string>
+    <string name="contact_photo">contact photo</string>
+    <string name="default_contact_name">My friend</string>
+    <string name="message_text">Message text:</string>
+    <string name="send">send</string>
 
     <string-array name="gender_array">
         <item>Male</item>

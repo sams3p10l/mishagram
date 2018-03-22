@@ -1,5 +1,7 @@
 package com.example.specter.mishagram;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,17 +10,22 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class RegisterActivity extends AppCompatActivity
 {
 
 	public EditText username, password, email, firstName, lastName;
 	public Button register;
-	protected boolean usernameCheck, passwordCheck, emailCheck;
+	public CalendarView calendar;
+	protected boolean usernameCheck, passwordCheck, emailCheck, buttonReady;
 
-	@Override
+	@SuppressLint("SimpleDateFormat")
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -30,79 +37,19 @@ public class RegisterActivity extends AppCompatActivity
 		firstName = findViewById(R.id.first_name);
 		lastName = findViewById(R.id.last_name);
 		register = findViewById(R.id.button_register);
+		calendar = findViewById(R.id.calendar);
+		Spinner spinner = findViewById(R.id.gender_spinner);
 
-		username.setOnClickListener(new View.OnClickListener()				//ZASTO NE RADI
+		String selectedDate = "31/07/1996";
+
+		//TODO: enable register button on bundle receive - without text change
+
+		Bundle receivedBundle = getIntent().getExtras();								//username password transfer bundle
+		if (receivedBundle != null)
 		{
-			int i = 0;
-
-			@Override
-			public void onClick(View view)
-			{
-				if (++i == 1)
-					username.setText("");
-			}
-		});
-
-		password.setOnFocusChangeListener(new View.OnFocusChangeListener()
-		{
-			int i = 0;
-
-			@Override
-			public void onFocusChange(View view, boolean b)
-			{
-				if (++i == 1)
-				{
-					password.setText("");
-					password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-				}
-
-			}
-		});
-
-		firstName.setOnFocusChangeListener(new View.OnFocusChangeListener()
-		{
-			int i = 0;
-
-			@Override
-			public void onFocusChange(View view, boolean b)
-			{
-				if (++i == 1)
-				{
-					firstName.setText("");
-				}
-			}
-		});
-
-		lastName.setOnFocusChangeListener(new View.OnFocusChangeListener()
-		{
-			int i = 0;
-
-			@Override
-			public void onFocusChange(View view, boolean b)
-			{
-				if (++i == 1)
-				{
-					lastName.setText("");
-				}
-			}
-		});
-
-		email.setOnFocusChangeListener(new View.OnFocusChangeListener()
-		{
-			int i = 0;
-
-			@Override
-			public void onFocusChange(View view, boolean b)
-			{
-				if (++i == 1)
-				{
-					email.setText("");
-				}
-			}
-		});
-
-		//TODO: sinhronizuj listenere
-		//da li moraju overrideovane funkcije da bleje prazne
+			username.setText(receivedBundle.getString("user"));
+			password.setText(receivedBundle.getString("pass"));
+		}
 
 		username.addTextChangedListener(new TextWatcher()
 		{
@@ -115,13 +62,18 @@ public class RegisterActivity extends AppCompatActivity
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
 			{
-
+				usernameCheck = username.getText().toString().length() > 0;
 			}
 
 			@Override
 			public void afterTextChanged(Editable editable)
 			{
-				usernameCheck = username.getText().toString().length() > 0;
+				buttonReady = usernameCheck && passwordCheck && emailCheck;
+
+				if (buttonReady)
+					register.setEnabled(true);
+				else
+					register.setEnabled(false);
 			}
 		});
 
@@ -136,13 +88,19 @@ public class RegisterActivity extends AppCompatActivity
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
 			{
-
+				passwordCheck = password.getText().toString().length() >= 6;
 			}
 
 			@Override
 			public void afterTextChanged(Editable editable)
 			{
-				passwordCheck = password.getText().toString().length() >= 6;
+				buttonReady = usernameCheck && passwordCheck && emailCheck;
+
+				if (buttonReady)
+					register.setEnabled(true);
+				else
+					register.setEnabled(false);
+
 			}
 		});
 
@@ -162,25 +120,46 @@ public class RegisterActivity extends AppCompatActivity
 			@Override
 			public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
 			{
-
+				emailCheck = email.getText().toString().length() > 0 && monkeyChecker();
 			}
 
 			@Override
 			public void afterTextChanged(Editable editable)
 			{
-				emailCheck = email.getText().toString().length() > 0 && monkeyChecker();
+				buttonReady = usernameCheck && passwordCheck && emailCheck;
+
+				if (buttonReady)
+					register.setEnabled(true);
+				else
+					register.setEnabled(false);
+
 			}
 		});
 
-
-		Spinner spinner = findViewById(R.id.gender_spinner);								//gender list pull
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,		//gender list pull
 				R.array.gender_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 
-		boolean buttonReady = usernameCheck && passwordCheck && emailCheck;
-			register.setEnabled(buttonReady);
+		calendar.setMaxDate(calendar.getDate());												//max date = current date
+		try
+		{
+			calendar.setDate(new SimpleDateFormat("dd/MM/yyyy").parse(selectedDate).getTime(), true, true);			//default date = birthday
+		} catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+
+		register.setOnClickListener(new View.OnClickListener()
+		{
+			@Override
+			public void onClick(View view)
+			{
+				Intent intent = new Intent(RegisterActivity.this, ContactsActivity.class);
+				startActivity(intent);
+				finish();
+			}
+		});
 
 	}
 }
