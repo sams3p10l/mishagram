@@ -5,12 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
 
 public class ContactsActivity extends AppCompatActivity
 {
 	public Button logout;
-	public TextView contactName;
+	public ListView list;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -19,7 +19,15 @@ public class ContactsActivity extends AppCompatActivity
 		setContentView(R.layout.activity_contacts);
 
 		logout = findViewById(R.id.logout_button);
-		contactName = findViewById(R.id.contact_name);
+		list = findViewById(R.id.contact_list);
+
+		ContactAdapter contactAdapter = new ContactAdapter(this);
+
+		contactAdapter.addContact(new Contact("Misa Misic"));
+		contactAdapter.addContact(new Contact("Laza Lazic"));
+		contactAdapter.addContact(new Contact("Pera Peric"));
+
+		list.setAdapter(contactAdapter);
 
 		logout.setOnClickListener(new View.OnClickListener()
 		{
@@ -32,14 +40,6 @@ public class ContactsActivity extends AppCompatActivity
 			}
 		});
 
-		contactName.setOnClickListener(new View.OnClickListener()
-		{
-			@Override
-			public void onClick(View view)
-			{
-				Intent intent = new Intent(ContactsActivity.this, MessageActivity.class);
-				startActivity(intent);
-			}
-		});
+
 	}
 }

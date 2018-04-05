@@ -7,14 +7,19 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MessageActivity extends AppCompatActivity
 {
 	public Button logout, send;
 	public EditText message;
+	public TextView headline;
+	public ListView list;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -25,8 +30,18 @@ public class MessageActivity extends AppCompatActivity
 		logout = findViewById(R.id.logout_message);
 		send = findViewById(R.id.send);
 		message = findViewById(R.id.type_message);
+		headline = findViewById(R.id.contact_name);
+		list = findViewById(R.id.message_list);
 
-		//TODO: da textview prima contact name
+		Bundle receivedBundle = getIntent().getExtras();
+		if (receivedBundle != null)
+		{
+			headline.setText(receivedBundle.getString("name"));
+		}
+
+		final MessageAdapter messageAdapter = new MessageAdapter(this);
+
+		list.setAdapter(messageAdapter);
 
 		logout.setOnClickListener(new View.OnClickListener()
 		{
@@ -44,7 +59,19 @@ public class MessageActivity extends AppCompatActivity
 			@Override
 			public void onClick(View view)
 			{
-				Toast.makeText(MessageActivity.this, "Message is sent", Toast.LENGTH_SHORT).show();
+				messageAdapter.addMessage(new Message(message.getText().toString()));
+			}
+		});
+
+		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+		{
+			@Override
+			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
+			{
+				messageAdapter.removeMessage(i);
+				messageAdapter.notifyDataSetChanged();
+
+				return true;
 			}
 		});
 

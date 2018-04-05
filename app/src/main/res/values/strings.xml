@@ -18,6 +18,10 @@
     <string name="default_contact_name">My friend</string>
     <string name="message_text">Message text:</string>
     <string name="send">send</string>
+    <string name="default_thumbnail_text">A</string>
+    <string name="default_contact">John Doe</string>
+    <string name="confirmation_arrow">confirmation_arrow</string>
+    <string name="dummy_text">dummy text</string>
 
     <string-array name="gender_array">
         <item>Male</item>
