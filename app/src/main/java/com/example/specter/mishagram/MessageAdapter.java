@@ -61,7 +61,7 @@ public class MessageAdapter extends BaseAdapter
 	@Override
 	public View getView(int i, View view, ViewGroup viewGroup)
 	{
-		ViewHolder holder;
+		ViewHolder holder = new ViewHolder();
 
 		if (view == null)
 		{
@@ -69,17 +69,22 @@ public class MessageAdapter extends BaseAdapter
 			if (inflater != null)
 			{
 				if (messageList.size() % 2 == 0)
+				{
 					view = inflater.inflate(R.layout.message_layout, viewGroup, false);
+				}
 				else
+				{
 					view = inflater.inflate(R.layout.message_layout2, viewGroup, false);
+				}
 			}
-			holder = new ViewHolder();
 
 			holder.message_holder = view.findViewById(R.id.message_id);
 			view.setTag(holder);
 		}
 		else
+		{
 			holder = (ViewHolder) view.getTag();
+		}
 
 		final Message message = messageList.get(i);
 

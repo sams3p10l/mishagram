@@ -2,11 +2,15 @@ package com.example.specter.mishagram;
 
 public class Message
 {
+	private String sender;
+	private String receiver;
 	private String msg;
 
-	Message(String pmsg)
+	Message(String pSender, String pReceiver, String pmsg)
 	{
-		msg = pmsg;
+		this.sender = pSender;
+		this.receiver = pReceiver;
+		this.msg = pmsg;
 	}
 
 	public String getMsg()
@@ -14,8 +18,13 @@ public class Message
 		return msg;
 	}
 
-	public void setMsg(String msg)
+	public String getSender()
 	{
-		this.msg = msg;
+		return sender;
+	}
+
+	public String getReceiver()
+	{
+		return receiver;
 	}
 }

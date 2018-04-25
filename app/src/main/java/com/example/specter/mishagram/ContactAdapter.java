@@ -87,10 +87,11 @@ public class ContactAdapter extends BaseAdapter
 		
 		final Contact contact = arrayList.get(i);
 		Random random = new Random();
+		final String fullName = contact.getFirstName() + " " + contact.getLastName();
 
-		holder.thumbnail.setText(contact.getName().substring(0, 1));
+		holder.thumbnail.setText(contact.getFirstName().substring(0, 1));
 		holder.thumbnail.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-		holder.text.setText(contact.getName());
+		holder.text.setText(fullName);
 
 		holder.arrow.setOnClickListener(new View.OnClickListener()
 		{
@@ -100,7 +101,7 @@ public class ContactAdapter extends BaseAdapter
 				Intent intent = new Intent(context, MessageActivity.class);
 				Bundle bundle = new Bundle();
 
-				bundle.putString("name", contact.getName());
+				bundle.putString("name", fullName);
 				intent.putExtras(bundle);
 
 				context.startActivity(intent);

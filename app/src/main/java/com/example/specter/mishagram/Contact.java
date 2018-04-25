@@ -3,20 +3,36 @@ package com.example.specter.mishagram;
 
 public class Contact
 {
-	private String name;
+	private int id;
+	private String username;
+	private String firstName;
+	private String lastName;
 
-	Contact(String pname)
+	Contact(int pID, String pUsername, String pFirstname, String pLastname)
 	{
-		this.name = pname;
+		this.id = pID;
+		this.username = pUsername;
+		this.firstName = pFirstname;
+		this.lastName = pLastname;
 	}
 
-    public String getName()
-    {
-        return name;
-    }
+	public int getId()
+	{
+		return id;
+	}
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	public String getUsername()
+	{
+		return username;
+	}
+
+	public String getFirstName()
+	{
+		return firstName;
+	}
+
+	public String getLastName()
+	{
+		return lastName;
+	}
 }

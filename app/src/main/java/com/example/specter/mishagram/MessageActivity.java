@@ -56,10 +56,12 @@ public class MessageActivity extends AppCompatActivity
 
 		send.setOnClickListener(new View.OnClickListener()
 		{
+			//TODO: Sender, receiver
 			@Override
 			public void onClick(View view)
-			{
+			{/*
 				messageAdapter.addMessage(new Message(message.getText().toString()));
+				message.setText("");*/
 			}
 		});
 

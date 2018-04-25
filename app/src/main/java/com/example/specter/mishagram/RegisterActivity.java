@@ -42,6 +42,8 @@ public class RegisterActivity extends AppCompatActivity
 
 		String selectedDate = "31/07/1996";
 
+		final DatabaseHelper dbHelper = new DatabaseHelper(this);
+
 		//TODO: enable register button on bundle receive - without text change
 
 		Bundle receivedBundle = getIntent().getExtras();								//username password transfer bundle
@@ -155,7 +157,11 @@ public class RegisterActivity extends AppCompatActivity
 			@Override
 			public void onClick(View view)
 			{
-				Intent intent = new Intent(RegisterActivity.this, ContactsActivity.class);
+				Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+
+				Contact newContact = new Contact(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
+				dbHelper.insertContact(newContact);
+
 				startActivity(intent);
 				finish();
 			}

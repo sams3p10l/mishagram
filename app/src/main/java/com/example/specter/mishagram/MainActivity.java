@@ -1,6 +1,8 @@
 package com.example.specter.mishagram;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
     public Button login, register;
     Bundle bundle = new Bundle();
     boolean buttonReady, usernameCheck, passwordCheck;
+    DatabaseHelper dbH = new DatabaseHelper(this);
+    SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPref.edit();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view)
             {
                 Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
-                startActivity(intent);
+
+                if(checkIfUserPresent())
+                    startActivity(intent);
+                else
+                    Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -110,6 +120,18 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed()         //override da se back button ponasa kao home button nakon logouta
     {                                   //umesto da se vrati na contacts activity
         moveTaskToBack(true);
+    }
+
+    private boolean checkIfUserPresent()
+    {
+        Contact foundContact = dbH.readContact(username.getText().toString());
+
+        if(foundContact != null)
+        {
+            editor.putInt(getString(R.string.contact_id), foundContact.getId());
+            return true;
+        }
+        return false;
     }
 
 }

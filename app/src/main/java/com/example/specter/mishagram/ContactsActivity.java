@@ -23,9 +23,9 @@ public class ContactsActivity extends AppCompatActivity
 
 		ContactAdapter contactAdapter = new ContactAdapter(this);
 
-		contactAdapter.addContact(new Contact("Misa Misic"));
-		contactAdapter.addContact(new Contact("Laza Lazic"));
-		contactAdapter.addContact(new Contact("Pera Peric"));
+		contactAdapter.addContact(new Contact("mmisic", "Misa", "Misic"));
+		contactAdapter.addContact(new Contact("llazic", "Laza", "Lazic"));
+		contactAdapter.addContact(new Contact("pperic", "Pera", "Peric"));
 
 		list.setAdapter(contactAdapter);
 
