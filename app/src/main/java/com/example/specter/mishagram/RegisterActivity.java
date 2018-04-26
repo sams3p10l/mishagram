@@ -159,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity
 			{
 				Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
 
-				Contact newContact = new Contact(username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
+				Contact newContact = new Contact(0, username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
 				dbHelper.insertContact(newContact);
 
 				startActivity(intent);

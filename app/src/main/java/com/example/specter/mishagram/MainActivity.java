@@ -18,11 +18,9 @@ public class MainActivity extends AppCompatActivity {
 
     public EditText username, password;
     public Button login, register;
-    Bundle bundle = new Bundle();
+    public Bundle bundle = new Bundle();
     boolean buttonReady, usernameCheck, passwordCheck;
-    DatabaseHelper dbH = new DatabaseHelper(this);
-    SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-    SharedPreferences.Editor editor = sharedPref.edit();
+    private DatabaseHelper dbH = new DatabaseHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.passwordField);
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
+
+        final SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);
+        final SharedPreferences.Editor editor = pref.edit();
 
         username.addTextChangedListener(new TextWatcher()
         {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
 
-                if(checkIfUserPresent())
+                if(checkIfUserPresent(editor))
                     startActivity(intent);
                 else
                     Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
@@ -116,22 +117,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed()         //override da se back button ponasa kao home button nakon logouta
-    {                                   //umesto da se vrati na contacts activity
-        moveTaskToBack(true);
-    }
-
-    private boolean checkIfUserPresent()
+    private boolean checkIfUserPresent(SharedPreferences.Editor editor)
     {
         Contact foundContact = dbH.readContact(username.getText().toString());
 
         if(foundContact != null)
         {
-            editor.putInt(getString(R.string.contact_id), foundContact.getId());
+            editor.putInt("contact_id", foundContact.getId());
+            editor.apply();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed()         //override da se back button ponasa kao home button nakon logouta
+    {                                   //umesto da se vrati na contacts activity
+        moveTaskToBack(true);
     }
 
 }

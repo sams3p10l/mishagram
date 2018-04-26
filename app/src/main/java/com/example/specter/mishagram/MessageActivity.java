@@ -20,6 +20,8 @@ public class MessageActivity extends AppCompatActivity
 	public EditText message;
 	public TextView headline;
 	public ListView list;
+	public int senderID = 0, receiverID = 0;
+	private DatabaseHelper dbH = new DatabaseHelper(this);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -37,9 +39,16 @@ public class MessageActivity extends AppCompatActivity
 		if (receivedBundle != null)
 		{
 			headline.setText(receivedBundle.getString("name"));
+			senderID = receivedBundle.getInt("senderID");
+			receiverID = receivedBundle.getInt("receiverID");
 		}
 
 		final MessageAdapter messageAdapter = new MessageAdapter(this);
+		final Message[] messageList = dbH.readMessages(senderID, receiverID);
+
+		if(messageList != null)
+			for(Message messageIterator : messageList)
+				messageAdapter.addMessage(messageIterator);
 
 		list.setAdapter(messageAdapter);
 
@@ -59,9 +68,11 @@ public class MessageActivity extends AppCompatActivity
 			//TODO: Sender, receiver
 			@Override
 			public void onClick(View view)
-			{/*
-				messageAdapter.addMessage(new Message(message.getText().toString()));
-				message.setText("");*/
+			{
+				Message tempMsg = new Message(0, String.valueOf(senderID), String.valueOf(receiverID), message.getText().toString());
+				dbH.insertMessage(tempMsg);
+				messageAdapter.addMessage(tempMsg);
+				message.setText("");
 			}
 		});
 

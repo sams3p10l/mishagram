@@ -3,6 +3,7 @@ package com.example.specter.mishagram;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -100,8 +101,11 @@ public class ContactAdapter extends BaseAdapter
 			{
 				Intent intent = new Intent(context, MessageActivity.class);
 				Bundle bundle = new Bundle();
+				SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
 
 				bundle.putString("name", fullName);
+				bundle.putInt("senderID", pref.getInt("contact_id", 0));
+				bundle.putInt("receiverID", contact.getId());
 				intent.putExtras(bundle);
 
 				context.startActivity(intent);
