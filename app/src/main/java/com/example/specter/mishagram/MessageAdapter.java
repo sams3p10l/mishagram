@@ -2,10 +2,13 @@ package com.example.specter.mishagram;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ public class MessageAdapter extends BaseAdapter
 {
 	private Context context;
 	private ArrayList<Message> messageList;
+	private LinearLayout msgLayout;
 
 	MessageAdapter(Context context)
 	{
@@ -68,14 +72,7 @@ public class MessageAdapter extends BaseAdapter
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			if (inflater != null)
 			{
-				if (messageList.size() % 2 == 0)
-				{
-					view = inflater.inflate(R.layout.message_layout, viewGroup, false);
-				}
-				else
-				{
-					view = inflater.inflate(R.layout.message_layout2, viewGroup, false);
-				}
+				view = inflater.inflate(R.layout.message_layout, viewGroup, false);
 			}
 
 			holder.message_holder = view.findViewById(R.id.message_id);
@@ -87,8 +84,16 @@ public class MessageAdapter extends BaseAdapter
 		}
 
 		final Message message = messageList.get(i);
+		final SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		msgLayout = view.findViewById(R.id.messLayout);
 
 		holder.message_holder.setText(message.getMsg());
+
+		if(pref.getInt("contact_id", 0) != Integer.parseInt(message.getSender()))
+		{
+			holder.message_holder.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryTransparent));
+			msgLayout.setGravity(Gravity.START);
+		}
 
 		return view;
 	}
