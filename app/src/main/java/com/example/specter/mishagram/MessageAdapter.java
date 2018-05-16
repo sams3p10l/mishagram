@@ -17,7 +17,6 @@ public class MessageAdapter extends BaseAdapter
 {
 	private Context context;
 	private ArrayList<Message> messageList;
-	private LinearLayout msgLayout;
 
 	MessageAdapter(Context context)
 	{
@@ -85,13 +84,13 @@ public class MessageAdapter extends BaseAdapter
 
 		final Message message = messageList.get(i);
 		final SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
-		msgLayout = view.findViewById(R.id.messLayout);
+		LinearLayout msgLayout = view.findViewById(R.id.messLayout);
 
 		holder.message_holder.setText(message.getMsg());
 
 		if(pref.getInt("contact_id", 0) != Integer.parseInt(message.getSender()))
 		{
-			holder.message_holder.setBackgroundColor(context.getResources().getColor(R.color.colorPrimaryTransparent));
+			holder.message_holder.setBackground(context.getResources().getDrawable(R.drawable.blue_rectangle));
 			msgLayout.setGravity(Gravity.START);
 		}
 

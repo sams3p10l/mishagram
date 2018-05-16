@@ -3,6 +3,7 @@ package com.example.specter.mishagram;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,26 +15,43 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     public EditText username, password;
     public Button login, register;
     public Bundle bundle = new Bundle();
-    boolean buttonReady, usernameCheck, passwordCheck;
+    private boolean buttonReady, usernameCheck, passwordCheck;
+
     private DatabaseHelper dbH = new DatabaseHelper(this);
+    private HttpHelper hh;
+    private Handler handler;
+
+    public static String BASE_URL = "http://18.205.194.168:80";
+    public static String REGISTER_URL = BASE_URL + "/register";
+    public static String LOGIN_URL = BASE_URL + "/login";
+
+    private boolean permission = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        handler = new Handler();
+        hh = new HttpHelper();
+
         username = findViewById(R.id.usernameField);
         password = findViewById(R.id.passwordField);
         login = findViewById(R.id.login);
         register = findViewById(R.id.register);
 
-        final SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);
-        final SharedPreferences.Editor editor = pref.edit();
+        login.setOnClickListener(this);
+        register.setOnClickListener(this);
 
         username.addTextChangedListener(new TextWatcher()
         {
@@ -87,47 +105,84 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
-
-                if(checkIfUserPresent(editor))
-                    startActivity(intent);
-                else
-                    Toast.makeText(MainActivity.this, "User not found", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        register.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-
-                bundle.putString("user", username.getText().toString());
-                bundle.putString("pass", password.getText().toString());
-
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
     }
 
-    private boolean checkIfUserPresent(SharedPreferences.Editor editor)
+    @Override
+    public void onClick(View view)
     {
-        Contact foundContact = dbH.readContact(username.getText().toString());
+        int id = view.getId();
+        final SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);
+        final SharedPreferences.Editor editor = pref.edit();
+
+        if (id == R.id.login)
+        {
+            Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
+
+            checkIfUserPresent(intent);
+        }
+        else if (id == R.id.register)
+        {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+
+            /*bundle.putString("user", username.getText().toString());
+            bundle.putString("pass", password.getText().toString());
+
+            intent.putExtras(bundle);*/
+            startActivity(intent);
+        }
+    }
+
+    private void checkIfUserPresent(final Intent intent)
+    {
+        /*Contact foundContact = dbH.readContact(username.getText().toString());
 
         if(foundContact != null)
         {
             editor.putInt("contact_id", foundContact.getId());
             editor.apply();
             return true;
-        }
-        return false;
+        }*/
+
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                JSONObject loginContact = new JSONObject();
+                try
+                {
+                    loginContact.put("username", username.getText().toString());
+                    loginContact.put("password", password.getText().toString());
+
+                    final String success = hh.postJSONObject(LOGIN_URL, loginContact);
+
+                    if(success.equals("successful"))
+                        permission = true;
+
+                    handler.post(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            if(permission){
+                            startActivity(intent);
+                            finish();
+                        }
+                            Toast.makeText(MainActivity.this, "Login failed: " + success, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                } catch (JSONException | IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+        /*if(permission){
+            startActivity(intent);
+            finish();
+        }*/
+
     }
 
     @Override
@@ -135,5 +190,4 @@ public class MainActivity extends AppCompatActivity {
     {                                   //umesto da se vrati na contacts activity
         moveTaskToBack(true);
     }
-
 }

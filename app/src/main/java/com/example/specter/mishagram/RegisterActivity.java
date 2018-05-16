@@ -2,6 +2,7 @@ package com.example.specter.mishagram;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,7 +14,12 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -24,6 +30,10 @@ public class RegisterActivity extends AppCompatActivity
 	public Button register;
 	public CalendarView calendar;
 	protected boolean usernameCheck, passwordCheck, emailCheck, buttonReady;
+
+	private DatabaseHelper dbHelper;
+	private HttpHelper hh;
+	private Handler handler;
 
 	@SuppressLint("SimpleDateFormat")
 	protected void onCreate(Bundle savedInstanceState)
@@ -42,16 +52,18 @@ public class RegisterActivity extends AppCompatActivity
 
 		String selectedDate = "31/07/1996";
 
-		final DatabaseHelper dbHelper = new DatabaseHelper(this);
+		dbHelper = new DatabaseHelper(this);
+		hh = new HttpHelper();
+		handler = new Handler();
 
 		//TODO: enable register button on bundle receive - without text change
 
-		Bundle receivedBundle = getIntent().getExtras();								//username password transfer bundle
+		/*Bundle receivedBundle = getIntent().getExtras();								//username password transfer bundle
 		if (receivedBundle != null)
 		{
 			username.setText(receivedBundle.getString("user"));
 			password.setText(receivedBundle.getString("pass"));
-		}
+		}*/
 
 		username.addTextChangedListener(new TextWatcher()
 		{
@@ -154,16 +166,50 @@ public class RegisterActivity extends AppCompatActivity
 
 		register.setOnClickListener(new View.OnClickListener()
 		{
+			boolean permission = false;
+
 			@Override
 			public void onClick(View view)
 			{
-				Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+				final Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
 
-				Contact newContact = new Contact(0, username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
-				dbHelper.insertContact(newContact);
+				//Contact newContact = new Contact(0, username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
+				//dbHelper.insertContact(newContact);
 
-				startActivity(intent);
-				finish();
+				new Thread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						JSONObject registerContact = new JSONObject();
+						try {
+							registerContact.put("username", username.getText().toString());
+							registerContact.put("password", password.getText().toString());
+							registerContact.put("email", email.getText().toString());
+
+							final String success = hh.postJSONObject(MainActivity.REGISTER_URL, registerContact);
+
+							if (success.equals("successful"))
+								permission = true;
+
+							handler.post(new Runnable()
+							{
+								@Override
+								public void run()
+								{
+									Toast.makeText(RegisterActivity.this, "Register status: " + success, Toast.LENGTH_LONG).show();
+									if(permission){
+										startActivity(intent);
+										finish();
+									}
+								}
+							});
+						} catch (JSONException | IOException e)
+						{
+							e.printStackTrace();
+						}
+					}
+				}).start();
 			}
 		});
 
