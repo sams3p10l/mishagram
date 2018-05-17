@@ -29,11 +29,19 @@
             android:textStyle="bold" />
 
         <Button
+            android:id="@+id/refreshBtn"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@id/logout_message"
+            android:background="@drawable/baseline_autorenew_black_24dp"
+            tools:ignore="RelativeOverlap" />
+
+        <Button
             android:id="@+id/logout_message"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="@string/log_out"
+            android:background="@drawable/baseline_exit_to_app_black_24dp"
             tools:ignore="RelativeOverlap" />
 
         <View
@@ -58,8 +66,9 @@
         android:id="@+id/rel_bottom"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal">
 
         <EditText
             android:id="@+id/type_message"
@@ -67,18 +76,18 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:hint="@string/message_text"
-            android:maxLines="1"
             android:inputType="text"
-            />
+            android:maxLines="1" />
 
         <Button
             android:id="@+id/send"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/send"
+            android:layout_width="50dp"
+            android:layout_height="45dp"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="26dp"
+            android:background="@drawable/baseline_send_black_24dp"
             android:enabled="false"
-            android:layout_centerInParent="true"
             tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>

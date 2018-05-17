@@ -1,6 +1,7 @@
 package com.example.specter.mishagram;
 
-import android.util.Log;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,18 +16,27 @@ import java.net.URL;
 
 public class HttpHelper
 {
+	private Context context;
+
 	private static final int SUCCESS = 200;
 	private static final int BAD_RQ = 400;
 	private static final int NOT_FOUND = 404;
 
-	public JSONArray getJSONArray(String urlString) throws IOException, JSONException
+	HttpHelper(Context pContext)
 	{
-		//da l treba init connectiona na null?
-		URL url = new URL(urlString);
+		this.context = pContext;
+	}
+
+	public JSONArray getJSONContacts() throws IOException, JSONException
+	{
+		URL url = new URL(MainActivity.GET_CONTACT_URL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		String sessionID = pref.getString("cookie", "");
 
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("Accept", "application/json");
+		connection.setRequestProperty("sessionid", sessionID);
 		connection.setReadTimeout(10000);
 		connection.setConnectTimeout(10000);
 
@@ -47,8 +57,6 @@ public class HttpHelper
 
 		br.close();
 		String jsonString = sb.toString();
-
-		Log.d("HTTP GET", "JSON data- " + jsonString);
 
 		int responseCode = connection.getResponseCode();
 		String responseMessage = connection.getResponseMessage();
@@ -66,13 +74,18 @@ public class HttpHelper
 
 	}
 
-	public JSONObject getJSONObject(String urlString) throws IOException, JSONException
+	public JSONArray getJSONMessage(String toWhom) throws IOException, JSONException //JE L MI TREBA OVO
 	{
-		URL url = new URL(urlString);
+		String fullURL = MainActivity.SEND_MSG_URL + "/" + toWhom;
+		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		String sessionID = pref.getString("cookie", "");
+
+		URL url = new URL(fullURL);
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
 		connection.setRequestMethod("GET");
 		connection.setRequestProperty("Accept", "application/json");
+		connection.setRequestProperty("sessionid", sessionID);
 		connection.setReadTimeout(10000);
 		connection.setConnectTimeout(10000);
 
@@ -94,8 +107,6 @@ public class HttpHelper
 		br.close();
 		String jsonString = sb.toString();
 
-		//Log.d("HTTP GET", "JSON data- " + jsonString);
-
 		int responseCode = connection.getResponseCode();
 		String responseMessage = connection.getResponseMessage();
 
@@ -103,10 +114,10 @@ public class HttpHelper
 
 		if(responseCode == SUCCESS)
 		{
-			return new JSONObject(jsonString);
+			return new JSONArray(jsonString);
 		}
 		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409)
-			return new JSONObject(responseMessage);
+			return new JSONArray(responseMessage);
 		else
 			return null;
 	}
@@ -119,6 +130,13 @@ public class HttpHelper
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
 		connection.setRequestProperty("Accept", "application/json");
+
+		if(urlString.equals(MainActivity.SEND_MSG_URL))
+		{
+			SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+			String sessionID = pref.getString("cookie", "");
+			connection.setRequestProperty("sessionid", sessionID);
+		}
 
 		connection.setDoInput(true);
 		connection.setDoOutput(true);
@@ -138,8 +156,13 @@ public class HttpHelper
 		int responseCode = connection.getResponseCode();
 		String responseMessage = connection.getResponseMessage();
 
-		Log.i("STATUS", String.valueOf(connection.getResponseCode()));
-		Log.i("MSG" , connection.getResponseMessage());
+		if(urlString.equals(MainActivity.LOGIN_URL))
+		{
+			SharedPreferences.Editor editor = context.getSharedPreferences("sharedPref", 0).edit();
+			String cookieHeader = connection.getHeaderField("sessionid");
+			editor.putString("cookie", cookieHeader);
+			editor.apply();
+		}
 
 		if(responseCode == SUCCESS)
 		{
@@ -149,5 +172,31 @@ public class HttpHelper
 			return responseMessage;
 		else
 			return null;
+	}
+
+	public boolean postLogout() throws IOException
+	{
+		URL url = new URL(MainActivity.LOGOUT_URL);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		String sessionID = pref.getString("cookie", "");
+
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+		connection.setRequestProperty("Accept", "application/json");
+		connection.setRequestProperty("sessionid", sessionID);
+
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+
+		try{
+			connection.connect();
+		} catch (IOException e) {
+			return false;
+		}
+
+		int responseCode = connection.getResponseCode();
+
+		return responseCode == SUCCESS;
 	}
 }

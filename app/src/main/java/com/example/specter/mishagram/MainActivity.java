@@ -1,15 +1,12 @@
 package com.example.specter.mishagram;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public EditText username, password;
     public Button login, register;
     public Bundle bundle = new Bundle();
-    private boolean buttonReady, usernameCheck, passwordCheck;
 
     private DatabaseHelper dbH = new DatabaseHelper(this);
     private HttpHelper hh;
@@ -34,8 +30,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String BASE_URL = "http://18.205.194.168:80";
     public static String REGISTER_URL = BASE_URL + "/register";
     public static String LOGIN_URL = BASE_URL + "/login";
+    public static String GET_CONTACT_URL = BASE_URL + "/contacts";
+    public static String SEND_MSG_URL = BASE_URL + "/message";
+    public static String LOGOUT_URL = BASE_URL + "/logout";
 
     private boolean permission = false;
+    private boolean buttonReady, usernameCheck, passwordCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         handler = new Handler();
-        hh = new HttpHelper();
+        hh = new HttpHelper(this);
 
         username = findViewById(R.id.usernameField);
         password = findViewById(R.id.passwordField);
@@ -111,38 +111,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view)
     {
         int id = view.getId();
-        final SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);
-        final SharedPreferences.Editor editor = pref.edit();
+        final SharedPreferences.Editor pref = getApplicationContext().getSharedPreferences("sharedPref", 0).edit();
 
         if (id == R.id.login)
         {
             Intent intent = new Intent(MainActivity.this, ContactsActivity.class);
-
+            pref.putString("usernameLogin", username.getText().toString());
+            pref.apply();
             checkIfUserPresent(intent);
         }
         else if (id == R.id.register)
         {
             Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-
-            /*bundle.putString("user", username.getText().toString());
-            bundle.putString("pass", password.getText().toString());
-
-            intent.putExtras(bundle);*/
             startActivity(intent);
         }
     }
 
     private void checkIfUserPresent(final Intent intent)
     {
-        /*Contact foundContact = dbH.readContact(username.getText().toString());
-
-        if(foundContact != null)
-        {
-            editor.putInt("contact_id", foundContact.getId());
-            editor.apply();
-            return true;
-        }*/
-
         new Thread(new Runnable()
         {
             @Override
@@ -168,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             startActivity(intent);
                             finish();
                         }
-                            Toast.makeText(MainActivity.this, "Login failed: " + success, Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Login status: " + success, Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (JSONException | IOException e)
@@ -177,11 +163,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         }).start();
-
-        /*if(permission){
-            startActivity(intent);
-            finish();
-        }*/
 
     }
 

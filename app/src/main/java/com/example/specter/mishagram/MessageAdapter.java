@@ -35,6 +35,12 @@ public class MessageAdapter extends BaseAdapter
 		messageList.remove(position);
 	}
 
+	public void clearMessageList()
+	{
+		messageList.clear();
+		notifyDataSetChanged();
+	}
+
 	@Override
 	public int getCount()
 	{
@@ -62,18 +68,19 @@ public class MessageAdapter extends BaseAdapter
 
 	@SuppressLint("InflateParams")
 	@Override
-	public View getView(int i, View view, ViewGroup viewGroup)
+	public View getView(int i, View view, ViewGroup viewGroup) //TODO: 1000 BAGOVA
 	{
-		ViewHolder holder = new ViewHolder();
+		ViewHolder holder = null;
 
 		if (view == null)
 		{
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			if (inflater != null)
 			{
-				view = inflater.inflate(R.layout.message_layout, viewGroup, false);
+				view = inflater.inflate(R.layout.message_layout, null); //viewgroup ,false
 			}
 
+			holder = new ViewHolder();
 			holder.message_holder = view.findViewById(R.id.message_id);
 			view.setTag(holder);
 		}
@@ -82,13 +89,14 @@ public class MessageAdapter extends BaseAdapter
 			holder = (ViewHolder) view.getTag();
 		}
 
-		final Message message = messageList.get(i);
+		final Message message = (Message) getItem(i);
+
 		final SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
 		LinearLayout msgLayout = view.findViewById(R.id.messLayout);
 
 		holder.message_holder.setText(message.getMsg());
 
-		if(pref.getInt("contact_id", 0) != Integer.parseInt(message.getSender()))
+		if(!pref.getString("usernameLogin", "").equals(message.getSender()))
 		{
 			holder.message_holder.setBackground(context.getResources().getDrawable(R.drawable.blue_rectangle));
 			msgLayout.setGravity(Gravity.START);

@@ -25,10 +25,10 @@
 
         <Button
             android:id="@+id/logout_button"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="200dp"
-            android:text="@string/log_out" />
+            android:layout_marginStart="240dp"
+            android:background="@drawable/baseline_exit_to_app_black_24dp" />
 
     </LinearLayout>
 

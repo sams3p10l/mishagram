@@ -31,7 +31,6 @@ public class RegisterActivity extends AppCompatActivity
 	public CalendarView calendar;
 	protected boolean usernameCheck, passwordCheck, emailCheck, buttonReady;
 
-	private DatabaseHelper dbHelper;
 	private HttpHelper hh;
 	private Handler handler;
 
@@ -52,18 +51,8 @@ public class RegisterActivity extends AppCompatActivity
 
 		String selectedDate = "31/07/1996";
 
-		dbHelper = new DatabaseHelper(this);
-		hh = new HttpHelper();
+		hh = new HttpHelper(this);
 		handler = new Handler();
-
-		//TODO: enable register button on bundle receive - without text change
-
-		/*Bundle receivedBundle = getIntent().getExtras();								//username password transfer bundle
-		if (receivedBundle != null)
-		{
-			username.setText(receivedBundle.getString("user"));
-			password.setText(receivedBundle.getString("pass"));
-		}*/
 
 		username.addTextChangedListener(new TextWatcher()
 		{
@@ -172,9 +161,6 @@ public class RegisterActivity extends AppCompatActivity
 			public void onClick(View view)
 			{
 				final Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-
-				//Contact newContact = new Contact(0, username.getText().toString(), firstName.getText().toString(), lastName.getText().toString());
-				//dbHelper.insertContact(newContact);
 
 				new Thread(new Runnable()
 				{

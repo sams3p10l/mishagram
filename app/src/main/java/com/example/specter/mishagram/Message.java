@@ -4,14 +4,12 @@ public class Message
 {
 	private int id;
 	private String sender;
-	private String receiver;
 	private String msg;
 
-	Message(int pID, String pSender, String pReceiver, String pmsg)
+	Message(int pID, String pSender, String pmsg)
 	{
 		this.id = pID;
 		this.sender = pSender;
-		this.receiver = pReceiver;
 		this.msg = pmsg;
 	}
 
@@ -30,8 +28,4 @@ public class Message
 		return sender;
 	}
 
-	public String getReceiver()
-	{
-		return receiver;
-	}
 }

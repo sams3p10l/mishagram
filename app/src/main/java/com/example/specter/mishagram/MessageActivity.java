@@ -1,6 +1,7 @@
 package com.example.specter.mishagram;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,14 +15,27 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MessageActivity extends AppCompatActivity
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class MessageActivity extends AppCompatActivity implements View.OnClickListener
 {
-	public Button logout, send;
+	public Button logout, send, refresh;
 	public EditText message;
 	public TextView headline;
 	public ListView list;
-	public int senderID = 0, receiverID = 0;
+
 	private DatabaseHelper dbH = new DatabaseHelper(this);
+	private HttpHelper hh;
+	private Handler handler;
+	private MessageAdapter messageAdapter;
+	private String receiver;
+	private volatile JSONArray messageListJSON;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -29,52 +43,39 @@ public class MessageActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_message);
 
+		int delay = 0, period = 10000;
+
 		logout = findViewById(R.id.logout_message);
 		send = findViewById(R.id.send);
 		message = findViewById(R.id.type_message);
 		headline = findViewById(R.id.contact_name);
 		list = findViewById(R.id.message_list);
+		refresh = findViewById(R.id.refreshBtn);
+
+		messageAdapter = new MessageAdapter(this);
+		handler = new Handler();
+		Timer timer = new Timer();
+		hh = new HttpHelper(this);
+		logout.setOnClickListener(this);
+		send.setOnClickListener(this);
+		refresh.setOnClickListener(this);
 
 		Bundle receivedBundle = getIntent().getExtras();
 		if (receivedBundle != null)
 		{
-			headline.setText(receivedBundle.getString("name"));
-			senderID = receivedBundle.getInt("senderID");
-			receiverID = receivedBundle.getInt("receiverID");
+			receiver = receivedBundle.getString("name");
 		}
 
-		final MessageAdapter messageAdapter = new MessageAdapter(this);
-		final Message[] messageList = dbH.readMessages(senderID, receiverID);
+		headline.setText(receiver);
 
-		if(messageList != null)
-			for(Message messageIterator : messageList)
-				messageAdapter.addMessage(messageIterator);
-
-		list.setAdapter(messageAdapter);
-
-		logout.setOnClickListener(new View.OnClickListener()
+		timer.scheduleAtFixedRate(new TimerTask()
 		{
 			@Override
-			public void onClick(View view)
+			public void run()
 			{
-				Intent intent = new Intent(MessageActivity.this, MainActivity.class);
-				startActivity(intent);
-				finish();
+				refresh();
 			}
-		});
-
-		send.setOnClickListener(new View.OnClickListener()
-		{
-			//TODO: Sender, receiver
-			@Override
-			public void onClick(View view)
-			{
-				Message tempMsg = new Message(0, String.valueOf(senderID), String.valueOf(receiverID), message.getText().toString());
-				dbH.insertMessage(tempMsg);
-				messageAdapter.addMessage(tempMsg);
-				message.setText("");
-			}
-		});
+		}, delay, period);
 
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
 		{
@@ -111,5 +112,114 @@ public class MessageActivity extends AppCompatActivity
 
 			}
 		});
+	}
+
+	@Override
+	public void onClick(View view)
+	{
+		int id = view.getId();
+
+		if(id == R.id.send)
+		{
+			new Thread(new Runnable()
+			{
+				JSONObject msgToSend = new JSONObject();
+				@Override
+				public void run()
+				{
+					try
+					{
+						msgToSend.put("receiver", receiver);
+						msgToSend.put("data", message.getText().toString());
+
+						hh.postJSONObject(MainActivity.SEND_MSG_URL, msgToSend);
+
+						handler.post(new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								message.setText("");
+								refresh();
+							}
+						});
+					} catch (JSONException | IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
+		else if(id == R.id.logout_message)
+		{
+			Intent intent = new Intent(MessageActivity.this, MainActivity.class);
+			new Thread(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					try
+					{
+						hh.postLogout();
+					} catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}).start();
+			startActivity(intent);
+			finish();
+		}
+		else if(id == R.id.refreshBtn)
+		{
+			refresh();
+		}
+	}
+
+	private void refresh()
+	{
+		new Thread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				try
+				{
+					messageListJSON = hh.getJSONMessage(receiver);
+					final Message[] messageList = formMessageListFromJSON(messageListJSON);
+
+					handler.post(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							messageAdapter.clearMessageList();
+							for (Message messageIterator : messageList)
+								messageAdapter.addMessage(messageIterator);
+							list.setAdapter(messageAdapter);
+						}
+					});
+				} catch (IOException | JSONException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}).start();
+	}
+
+	private Message[] formMessageListFromJSON(JSONArray ml) throws JSONException
+	{
+		Message[] messageList = new Message[ml.length()];
+		int iter = 0;
+
+		for(int i = 0; i < ml.length(); i++)
+		{
+			String sender = ml.getJSONObject(i).getString("sender");
+			String data = ml.getJSONObject(i).getString("data");
+
+			messageList[iter++] = new Message(0, sender, data);
+		}
+
+		return messageList;
 	}
 }

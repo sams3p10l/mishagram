@@ -88,11 +88,10 @@ public class ContactAdapter extends BaseAdapter
 		
 		final Contact contact = arrayList.get(i);
 		Random random = new Random();
-		final String fullName = contact.getFirstName() + " " + contact.getLastName();
 
-		holder.thumbnail.setText(contact.getFirstName().substring(0, 1));
+		holder.thumbnail.setText(contact.getUsername().substring(0, 1).toUpperCase());
 		holder.thumbnail.setBackgroundColor(Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-		holder.text.setText(fullName);
+		holder.text.setText(contact.getUsername());
 
 		holder.arrow.setOnClickListener(new View.OnClickListener()
 		{
@@ -103,9 +102,8 @@ public class ContactAdapter extends BaseAdapter
 				Bundle bundle = new Bundle();
 				SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
 
-				bundle.putString("name", fullName);
+				bundle.putString("name", contact.getUsername());
 				bundle.putInt("senderID", pref.getInt("contact_id", 0));
-				bundle.putInt("receiverID", contact.getId());
 				intent.putExtras(bundle);
 
 				context.startActivity(intent);

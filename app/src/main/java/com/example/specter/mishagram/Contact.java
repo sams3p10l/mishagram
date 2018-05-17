@@ -16,6 +16,12 @@ public class Contact
 		this.lastName = pLastname;
 	}
 
+	Contact(int id, String pUsername)
+	{
+		this.id = id;
+		this.username = pUsername;
+	}
+
 	public int getId()
 	{
 		return id;

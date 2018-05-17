@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-//TODO: Messages pull sender/receiver data from Contacts table
-
 public class DatabaseHelper extends SQLiteOpenHelper
 {
 	public static final String DATABASE_NAME = "mishagramDB.db";
@@ -88,7 +86,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = getReadableDatabase();
 
-		//TODO: Ako ne radi, id tip string
 		Cursor cursor = db.query(TABLE_NAME_CONTACTS, null, COLUMN_ID_C + "=?", new String[] {Integer.toString(searchID)}, null, null, null);
 
 		if (cursor.getCount() <= 0)
@@ -107,7 +104,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = getReadableDatabase();
 
-		//TODO: Ako ne radi, id tip string
 		Cursor cursor = db.query(TABLE_NAME_CONTACTS, null, COLUMN_USERNAME_C + "=?", new String[] {searchUser}, null, null, null);
 
 		if (cursor.getCount() <= 0)
@@ -148,7 +144,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		ContentValues values = new ContentValues();
 
 		values.put(COLUMN_SENDER_M, message.getSender());
-		values.put(COLUMN_RECEIVER_M, message.getReceiver());
+		//values.put(COLUMN_RECEIVER_M, message.getReceiver());
 		values.put(COLUMN_MESSAGE_M, message.getMsg());
 
 		db.insert(TABLE_NAME_MESSAGES, null, values);
@@ -159,7 +155,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = getReadableDatabase();
 
-		//TODO: Ako ne radi, id tip string
 		Cursor cursor = db.query(TABLE_NAME_MESSAGES, null, COLUMN_ID_M + "=?", new String[] {Integer.toString(id)}, null, null, null);
 		if (cursor.getCount() <= 0)
 			return null;
@@ -179,7 +174,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 		String receiver = cursor.getString(cursor.getColumnIndex(COLUMN_RECEIVER_M));
 		String msg = cursor.getString(cursor.getColumnIndex(COLUMN_MESSAGE_M));
 
-		return new Message(id, sender, receiver, msg);
+		return new Message(id, sender, msg);
 	}
 
 	public void deleteMessage(int id)
@@ -193,7 +188,6 @@ public class DatabaseHelper extends SQLiteOpenHelper
 	{
 		SQLiteDatabase db = getReadableDatabase();
 
-		//TODO: Obrni okreni
 		Cursor cursor = db.query(TABLE_NAME_MESSAGES, null,  "(" + COLUMN_SENDER_M + "=? and " + COLUMN_RECEIVER_M + "=?) or " +
 				"(" + COLUMN_SENDER_M + "=? and " + COLUMN_RECEIVER_M + "=?)", new String[] {Integer.toString(senderID), Integer.toString(receiverID),
 				Integer.toString(receiverID), Integer.toString(senderID)}, null, null, null, null);
