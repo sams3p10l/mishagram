@@ -1,6 +1,7 @@
 package com.example.specter.mishagram;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -80,15 +81,47 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 		list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
 		{
 			@Override
-			public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
+			public boolean onItemLongClick(final AdapterView<?> adapterView, View view, final int i, long l)
 			{
-				messageAdapter.removeMessage(i);
-				messageAdapter.notifyDataSetChanged();
+				new Thread(new Runnable() {
+					JSONObject toDelete = new JSONObject();
+					SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);
+					@Override
+					public void run() {
+						try {
+							Message getMsg = (Message) messageAdapter.getItem(i);
+							if(getMsg.getSender().equals(pref.getString("usernameLogin", "")))
+							{
+								toDelete.put("receiver", receiver);
+								toDelete.put("sender", pref.getString("usernameLogin", ""));
+								toDelete.put("data", getMsg.getMsg());
+							}
+							else
+							{
+								toDelete.put("receiver", pref.getString("usernameLogin", ""));
+								toDelete.put("sender", receiver);
+								toDelete.put("data", getMsg.getMsg());
+							}
+
+							final String success = hh.deleteMessage(toDelete);
+
+							handler.post(new Runnable() {
+								@Override
+								public void run() {
+									refresh();
+									Toast.makeText(MessageActivity.this, "Message deletion: " + success, Toast.LENGTH_SHORT).show();
+								}
+							});
+						} catch (JSONException | IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
 
 				return true;
 			}
 		});
-
+		
 		message.addTextChangedListener(new TextWatcher()
 		{
 			@Override
@@ -160,7 +193,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 				{
 					try
 					{
-						hh.postLogout();
+						hh.postLogout();		//TODO: status check
 					} catch (IOException e)
 					{
 						e.printStackTrace();

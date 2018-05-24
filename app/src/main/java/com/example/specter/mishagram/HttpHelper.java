@@ -199,4 +199,47 @@ public class HttpHelper
 
 		return responseCode == SUCCESS;
 	}
+
+	public String deleteMessage(JSONObject jsonToDelete) throws IOException
+	{
+		URL url = new URL(MainActivity.SEND_MSG_URL);			//DOUBLE CHECK
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		String sessionID = pref.getString("cookie", "");
+
+		connection.setRequestMethod("DELETE");
+		connection.setRequestProperty("sessionid", sessionID);
+		connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		connection.setRequestProperty("Accept","application/json");
+
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
+
+		try {
+			connection.connect();
+		} catch (IOException e) {
+			return "Can't connect to server";
+		}
+
+		DataOutputStream dos = new DataOutputStream(connection.getOutputStream());
+
+		dos.writeBytes(jsonToDelete.toString());
+		dos.flush();
+		dos.close();
+
+		int responseCode = connection.getResponseCode();
+		String responseMsg = connection.getResponseMessage();
+
+		connection.disconnect();
+
+		if(responseCode == SUCCESS)
+		{
+			return "successful";
+		}
+		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409)
+			return responseMsg;
+		else
+			return null;
+
+	}
 }
