@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String GET_CONTACT_URL = BASE_URL + "/contacts";
     public static String SEND_MSG_URL = BASE_URL + "/message";
     public static String LOGOUT_URL = BASE_URL + "/logout";
+    public static String NOTIFICATION_URL = BASE_URL + "/getfromservice";
 
     private boolean permission = false;
     private boolean buttonReady, usernameCheck, passwordCheck;

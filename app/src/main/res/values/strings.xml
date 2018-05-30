@@ -23,6 +23,7 @@
     <string name="confirmation_arrow">confirmation_arrow</string>
     <string name="dummy_text">dummy text</string>
     <string name="contact_id">contact_id</string>
+    <string name="notification_title">You have unread messages</string>
 
     <string-array name="gender_array">
         <item>Male</item>

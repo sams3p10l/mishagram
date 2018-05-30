@@ -44,7 +44,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_message);
 
-		int delay = 0, period = 10000;
+		int delay = 0, period = 30000;
 
 		logout = findViewById(R.id.logout_message);
 		send = findViewById(R.id.send);
@@ -82,7 +82,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 		{
 			@Override
 			public boolean onItemLongClick(final AdapterView<?> adapterView, View view, final int i, long l)
-			{
+			{ //TODO: pomeri ovo u onLongClickListener klasu
 				new Thread(new Runnable() {
 					JSONObject toDelete = new JSONObject();
 					SharedPreferences pref = getApplicationContext().getSharedPreferences("sharedPref", 0);

@@ -12,6 +12,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HttpHelper
@@ -74,7 +75,7 @@ public class HttpHelper
 
 	}
 
-	public JSONArray getJSONMessage(String toWhom) throws IOException, JSONException //JE L MI TREBA OVO
+	public JSONArray getJSONMessage(String toWhom) throws IOException, JSONException
 	{
 		String fullURL = MainActivity.SEND_MSG_URL + "/" + toWhom;
 		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
@@ -238,6 +239,54 @@ public class HttpHelper
 		}
 		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409)
 			return responseMsg;
+		else
+			return null;
+
+	}
+
+	public String newMessageCheck() throws IOException
+	{
+		URL url = new URL(MainActivity.NOTIFICATION_URL);
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+		SharedPreferences pref = context.getSharedPreferences("sharedPref", 0);
+		String sessionID = pref.getString("cookie", "");
+
+		connection.setRequestMethod("GET");
+		connection.setRequestProperty("Accept", "application/json");
+		connection.setRequestProperty("sessionid", sessionID);
+		connection.setReadTimeout(10000);
+		connection.setConnectTimeout(10000);
+
+		try{
+			connection.connect();
+		} catch (IOException e) {
+			return null;
+		}
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		StringBuilder sb = new StringBuilder();
+		String line;
+
+		if((line = br.readLine()) != null) //while
+		{
+			sb.append(line);
+		}
+
+		br.close();
+		String serverResponse = sb.toString();
+
+		int responseCode = connection.getResponseCode();
+		String responseMessage = connection.getResponseMessage();
+
+		connection.disconnect();
+
+		if(responseCode == SUCCESS)
+		{
+			return serverResponse;
+		}
+		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409)
+			return responseMessage;
 		else
 			return null;
 
