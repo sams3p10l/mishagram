@@ -169,7 +169,7 @@ public class HttpHelper
 		{
 			return "successful";
 		}
-		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409)
+		else if (responseCode == BAD_RQ || responseCode == NOT_FOUND || responseCode == 409 || responseCode == 503)
 			return responseMessage;
 		else
 			return null;

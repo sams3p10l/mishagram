@@ -37,6 +37,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 	private MessageAdapter messageAdapter;
 	private String receiver;
 	private volatile JSONArray messageListJSON;
+	private NativeEncryption crypter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -60,6 +61,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 		logout.setOnClickListener(this);
 		send.setOnClickListener(this);
 		refresh.setOnClickListener(this);
+		crypter = new NativeEncryption();
 
 		Bundle receivedBundle = getIntent().getExtras();
 		if (receivedBundle != null)
@@ -162,8 +164,11 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 				{
 					try
 					{
+						String msgData = message.getText().toString();
+						String encryptedData = crypter.cryption(msgData);
+
 						msgToSend.put("receiver", receiver);
-						msgToSend.put("data", message.getText().toString());
+						msgToSend.put("data", encryptedData);
 
 						hh.postJSONObject(MainActivity.SEND_MSG_URL, msgToSend);
 
@@ -248,7 +253,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 		for(int i = 0; i < ml.length(); i++)
 		{
 			String sender = ml.getJSONObject(i).getString("sender");
-			String data = ml.getJSONObject(i).getString("data");
+			String encData = ml.getJSONObject(i).getString("data");
+			String data = crypter.cryption(encData);
 
 			messageList[iter++] = new Message(0, sender, data);
 		}
